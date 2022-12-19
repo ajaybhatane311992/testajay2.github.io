@@ -1,0 +1,99 @@
+
+{% load cart %}
+
+<!--    card-->
+<div class="row">
+    <div class="col-lg-3 ">
+            <a class="list-group-item list-group-item-action" aria-current="page" href="{% url 'paginator' %}">All</a>
+            {% for category in categories %}
+            <a class="list-group-item list-group-item-action" aria-current="page" href="{% url 'paginator' %}?category={{category.id}}">{{category.cname}}</a>
+            {% endfor %}
+            <a class="list-group-item list-group-item-action" aria-current="page" href="{% url 'paginator' %}?productPrice=below500">Below 500</a>
+            <a class="list-group-item list-group-item-action" aria-current="page" href="{% url 'paginator' %}?productPrice=above500">Above 500</a>
+        <div class="dropdown show">
+        <a class="dropdown-toggle list-group-item list-group-item-action" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Select Brand
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="{% url 'paginator' %}?brandname=Levis">Levis</a>
+            <a class="dropdown-item" href="{% url 'paginator' %}?brandname=Roadstar">Roadstar</a>
+            <a class="dropdown-item" href="{% url 'paginator' %}?brandname=Us Pollo">Us Pollo</a>
+        </div>
+        </div>
+    </div>
+    <div class="col-lg-8 ">
+    <div class="container-fluid" >
+      <div class="row mx-auto">
+          {% if not products %}
+            Your search -<b>{{query}}</b> - did not match any documents.<br>
+            Suggestions:<br>
+            Make sure that all words are spelled correctly.<br>
+            Try different keywords.<br>
+            Try more general keywords.<br>
+
+          {% endif %}
+
+          {% for product in products %}
+              <div class="card mx-auto mb-3" id="{{product.id}}" style="box-shadow:0px 2px 10px rgba(0,0,0,0.3);">
+                  <img style="height : 400px; object-fit : cover;" src="{{product.image.url}}" class="card-img-top" alt="Image Not Found">
+                  <div class="card-body">
+                      <h5 class="card-title">{{product.Name}}</h5>
+                      <p class="card-text">Price:{{product.Price}}</p>
+                      <p class="card-text">{{product.description}}</p>
+                  </div>
+                  <div class="card-footer p-0 no-gutters" style="background-color:orange;">
+                      {% if product|is_in_cart:request.session.cart %}
+                      <div class="row no-gutters">
+                        <form action="{% url 'paginator' %}?category={{category.id}}#{{product.id}}" method="post" class="col-2">
+                            {% csrf_token %}
+                            <input hidden type="text" name="product"  value="{{product.id}}">
+                            <input hidden type="text" name="remove"  value="Ture">
+                            <input type="submit" value=" - " class=" btn btn-block btn-secondary">
+                        </form>
+                        <div class="text-center col">{{product|cart_quantity:request.session.cart}} in Cart</div>
+                        <form action="{% url 'paginator' %}?category={{category.id}}#{{product.id}}" method="post" class="col-2">
+                            {% csrf_token %}
+                            <input hidden type="text" name="product"  value="{{product.id}}">
+                            <input type="submit" value=" + " class=" btn btn-block btn-secondary">
+                        </form>
+                      </div>
+                      {% else %}
+                      <form action="{% url 'paginator' %}?category={{category.id}}#{{product.id}}" method="post" class="btn-block">
+                        {% csrf_token %}
+                        <input hidden type="text" name="product"  value="{{product.id}}">
+                        <input type="submit" class="float-right btn btn-light border form-control" value="Add To Cart">
+                      </form>
+                    {% endif %}
+
+                  </div>
+              </div>
+          {% endfor %}
+          {% for message in messages %}
+            <h1 style="color:red">{{message|upper}}</h1>
+          {% endfor %}
+
+      </div>
+    </div>
+    </div>
+</div>
+
+<!--Pagination Code-->
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+      {% if products.has_previous %}
+    <li class="page-item ">
+      <a class="page-link" href="{% url 'paginator' %}?page={{products.previous_page_number}}" tabindex="-1">Previous</a>
+    </li>
+      {% endif %}
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+      {% if products.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="{% url 'paginator' %}?page={{products.next_page_number}}">Next</a>
+    </li>
+      {% endif %}
+  </ul>
+</nav>
+<br>
+<br>

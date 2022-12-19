@@ -1,0 +1,55 @@
+{% extends 'EcomApp1/base.html' %}
+{% load static %}
+
+{% block head %}
+<title>Cart Page</title>
+{% endblock %}
+
+{% block body %}
+{% load cart %}
+{% load custom_filter %}
+<div class="container">
+    <div class="border rounded p-4 m-4">
+        <p class="display-4">Your Orders</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Sno.</th>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Date</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Download Invoice</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+            <tr id="{{product.id}}">
+                <td>{{forloop.counter}}</td>
+                <td>{{order.product.Name}}</td>
+                <td><img style="height: 80px;" src="{{order.product.image.url}}"></td>
+                <td>{{order.date}}</td>
+                <td>{{order.price|currency}}</td>
+                <td>{{order.quantity}}</td>
+                <td>{{order.quantity|multiply:order.price|currency}}</td>
+                {% if order.status == True %}
+                <td><button class="btn btn-primary"><a style="color:white;" href="{% url 'renderpdf' order.id %}">Invoice</a></button></td>
+                {% else %}
+                <td><small class="badge badge-warning" >Pending</small></td>
+                {% endif %}
+                {% if order.status %}
+                <td><small class="badge badge-success" > Completed </small></td>
+                {% else %}
+                <td><small class="badge badge-warning" >Pending</small></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

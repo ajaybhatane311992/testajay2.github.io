@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  {% block head %}
+    <title>Base</title>
+  {% endblock %}
+    <link rel="stylesheet" type="text/css" href="{% static 'EcomApp1/main.css' %}">
+<!--  Booststrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+{% load cart %}
+<header align="center">
+  <img src="{% static 'EcomApp1/images/logo2.png' %}" alt="My image">
+</header>
+
+<!--Nav try-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+  <a class="navbar-brand" href="{% url 'home' %}">Ecom</a>
+
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'add' %}">Add</a>
+      </li>
+      <li hidden class="nav-item">
+        <a class="nav-link" href="{% url 'store' %}">Store</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'paginator' %}">Store</a>
+      </li>
+      <a class="nav-link btn btn-outline-danger" href="{% url 'cart' %}">Your Cart
+        <span class="badge badge-info">{{request.session.cart.keys|length}}</span>
+      </a>
+      <a class="nav-link btn btn-outline-danger" href="{% url 'orders' %}">Your Orders</a>
+    </ul>
+    <!--   normal search bar -->
+    {% comment %}
+    <form hidden action="{% url 'search' %}" class="form-inline my-2 my-lg-0">
+      <input  class="form-control mr-sm-2" type="search" placeholder="Search1" aria-label="Search" name="query" id="query">
+      <button  class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search1</button>
+    </form>
+{% endcomment %}
+<!--    AJAX Search-->
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="SearchAJAX" aria-label="Search"  id="textsearch" onkeyup="showdata(this.value)" >
+    </form>
+    {% if request.session.cid != None %}
+        <a class="nav-link btn btn-outline-danger" style="color:orange;" href="/ecom/profile">Your Profile</a>
+    <form class="form-inline my-2 my-lg-0">
+
+      <a class="nav-link" style="color:#ff7105 " ><b>Hello,{{request.session.cname}}</b></a>	&nbsp;
+      <a href="{% url 'logout' %}" class="btn btn-outline-danger">Logout</a>&nbsp;
+    </form>
+    {% else %}
+    <form class="form-inline my-2 my-lg-0 ">
+      <a href="{% url 'login' %}" class="btn btn-primary ">Login</a>&nbsp;
+      <a href="{% url 'sendotp' %}" class="btn btn-primary ">SignUp</a>
+    </form>
+    {% endif %}
+  </div>
+</nav>
+<br>
+    {% block body %}
+        <h1>Block Body</h1>
+
+    {% endblock %}
+
+{% block search %}
+
+{% endblock %}
+
+{% block payment %}
+
+{% endblock payment %}
+<br>
+<div class="footer">
+  <p>©2020-2021 AllShopping.com </p>
+</div>
+<!--bootstrap-->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!-- script for ajax search -->
+<script type="text/javascript">
+  function showdata(a)
+  {
+     xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange=function()
+            {
+           document.getElementById("res").innerHTML = xmlhttp.responseText;
+            }
+            xmlhttp.open("get","/ecom/ajaxdata?q="+a,true); #asy
+            xmlhttp.send();
+  }
+</script>
+<!--end script for ajax search  -->
+</body>
+</html>

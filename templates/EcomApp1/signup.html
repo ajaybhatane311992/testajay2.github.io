@@ -1,0 +1,33 @@
+{% extends 'EcomApp1/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block head %}
+<title>SignUp Page</title>
+<link rel="stylesheet" type="text/css" href="{% static 'EcomApp1/signup.css' %}">
+{% endblock %}
+
+{% block body %}
+<section id="cover" class="min-vh-100">
+    <div id="cover-caption">
+        <div class="container">
+            <div class="row text-black">
+                <div class="col-xl-5 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
+                    <h3 class="display-5 py-2 text-truncate">SIGNUP FORM</h3>
+                    <div class="px-2">
+                        <form method="post" class="justify-content-center" novalidate>
+                            {% csrf_token %}
+                            {{form|crispy}}
+                            {% for msg in messages %}
+                            <p style="color:red;">{{msg}}</p>
+                            {% endfor %}
+                            <br>
+                            <button type="submit" class="btn btn-primary btn-lg">SignUp</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

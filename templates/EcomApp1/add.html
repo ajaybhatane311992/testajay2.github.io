@@ -1,0 +1,32 @@
+{% extends 'EcomApp1/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+   <title>Add Page</title>
+<link rel="stylesheet" type="text/css" href="{% static 'EcomApp1/login.css' %}">
+{% endblock %}
+
+
+{% block body %}
+<section id="cover" class="min-vh-100">
+    <div id="cover-caption">
+        <div class="container">
+            <div class="row text-black">
+                <div class="col-xl-5 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
+                    <h3 class="display-5 py-2 text-truncate">ADD FORM</h3>
+                    <div class="px-2">
+                        <form method="post" enctype="multipart/form-data" class="justify-content-center">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-primary btn-lg" >Upload</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+

@@ -1,0 +1,39 @@
+{% extends 'EcomApp1/base.html' %}
+
+{% block head %}
+    <title>Profile Page</title>
+{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+    <div class="border rounded p-2 m-5">
+        <p class="display-2">Your Profile</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>c id</th>
+                <td>{{customerobj.id}}</td>
+            <tr>
+            <tr>
+                <th>first_name</th>
+                <td>{{customerobj.first_name}}</td>
+            <tr>
+                <th>last_name</th>
+                <td>{{customerobj.last_name}}</td>
+            </tr>
+            <tr>
+                <th>email</th>
+                <td>{{customerobj.email}}</td>
+            </tr>
+                <th>phone</th>
+            <td>{{customerobj.phone}}</td>
+            </tr>
+            </thead>
+        </table>
+        <a href="{% url 'update' %}">Update</a>
+    </div>
+</div>
+
+{% endblock %}

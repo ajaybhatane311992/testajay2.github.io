@@ -1,0 +1,130 @@
+{% extends 'EcomApp1/base.html' %}
+
+{% block head %}
+<title>Cart Page</title>
+{% endblock %}
+
+{% block body %}
+{% load cart %}
+{% load custom_filter %}
+
+<div class="container">
+    <div class="border rounded p-4 m-4">
+        <p class="display-4">Your Cart</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Sno.</th>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+            <tr id="{{product.id}}">
+                <td>{{forloop.counter}}</td>
+                <td>{{product.Name}}</td>
+                <td><img style="height: 80px;" src="{{product.image.url}}"></td>
+                <td>{{product.Price|currency}}</td>
+                <td>
+                    <div class="row no-gutters" style="background-color:orange;">
+                        <form action="{% url 'cart' %}#{{product.id}}" method="post" class="col-2">
+                            {% csrf_token %}
+                            <input hidden type="text" name="product" value="{{product.id}}">
+                            <input hidden type="text" name="remove" value="Ture">
+                            <input type="submit" value=" - " class=" btn btn-block btn-secondary">
+                        </form>
+                        <div class="text-center col">{{product|cart_quantity:request.session.cart}} in Cart</div>
+                        <form action="{% url 'cart' %}#{{product.id}}" method="post" class="col-2">
+                            {% csrf_token %}
+                            <input hidden type="text" name="product" value="{{product.id}}">
+                            <input type="submit" value=" + " class=" btn btn-block btn-secondary">
+                        </form>
+                    </div>
+                <td>{{product|price_total:request.session.cart|currency}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <th class="text-center" colspan="5">Final Amount</th>
+                <th>{{products|total_cart_price:request.session.cart|currency}}</th>
+            </tr>
+            </tfoot>
+        </table>
+        <hr>
+         <div class="btn btn-warning border rounded col-lg-3 float-right">
+            <a href="#" data-toggle="modal"  data-target="#exampleModal" >Place Order</a>
+        </div>
+    </div>
+</div>
+
+<!--Bootstrap Modal-->
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Check out Form</h5>
+          <hr>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="m-2 p-3">
+              <form action="{% url 'check-out' %}" method="post" id="myform">
+                  {% csrf_token %}
+                  <div class="form-group">
+                      <label  >Address</label>
+                      <input type="text" name="address" class="form-control" placeholder="" aria-describedby="helpId">
+                  </div>
+                  <div class="form-group">
+                      <label  >Phone</label>
+                      <input type="text" name="phone"  class="form-control" placeholder="" aria-describedby="helpId">
+                  </div>
+<!--                  <input type="submit" class="btn float-right btn-outline-info col-lg-6" value="Place Order">-->
+                      <!-- Set up a container element for the button -->
+              </form>
+              <div id="paypal-button-container"></div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block payment %}
+    <!-- Include the PayPal JavaScript SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AScjP4CcalVys1qdbNjh_iGF_UI4ae4rO1qyPoGMLAVMG4IIj-eV0EyB2e-Di6t-_ITDS3cxdNHWpsyF&currency=USD"></script>
+    <script>
+        // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+            // Set up the transaction
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '{{products|total_cart_price:request.session.cart}}'
+                        }
+                    }]
+                });
+            },
+            // Finalize the transaction
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    // Show a success message to the buyer
+                    alert('Transaction completed by ' + details.payer.name.given_name + '!');
+                    document.getElementById("myform").submit();
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+{% endblock payment %}
